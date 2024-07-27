@@ -4,4 +4,4 @@
 # Base Image
 # =============================================================================
 
-FROM starlingnest/docker-freecad:latest
+FROM starlingnest/freecad:latest
