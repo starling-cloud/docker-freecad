@@ -2,25 +2,30 @@
 
 # Base Image
 # =============================================================================
-# Use Ubuntu 20.04 as the base image for more stability over the 'latest' tag
-FROM ubuntu:20.04
 
-# Set non-interactive installation to avoid getting stuck on prompts
+# Use a specific version of Ubuntu for reproducible builds
+FROM ubuntu:20.04 AS base
+
+# Prevent apt from prompting during installations
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Set the working directory
-WORKDIR /usr/src/app
+# Set the working directory to /app for a cleaner structure
+WORKDIR /app
 
-# Install prerequisites and FreeCAD
-# Use a single RUN command to reduce layers and clean up in the same layer to save space
+# Optimize layer caching by separating the addition of the repository and
+# installation of packages
 RUN apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:freecad-maintainers/freecad-stable && \
-    apt-get update && \
-    apt-get install -y freecad && \
-    # Clean up unnecessary files to keep the image clean and compact
+    apt-get install -y --no-install-recommends software-properties-common && \
+    add-apt-repository ppa:freecad-maintainers/freecad-stable
+
+# Install FreeCAD
+# =============================================================================
+# Install FreeCAD and clean up in one layer to reduce image size
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends freecad && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set the default command to run FreeCAD
+# Run FreeCAD
+# =============================================================================
 CMD ["freecad"]
