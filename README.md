@@ -1,6 +1,6 @@
 # Docker | FreeCAD
 
-**Starling Suite**
+**Starling Studio Suite**
 
 ---
 
